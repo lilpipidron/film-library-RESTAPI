@@ -6,12 +6,14 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8008"
     depends_on:
       - db
 
   db:
-    image: postgres:14
+    image: postgres:latest
+    ports:
+      - "5432:5432"
     volumes:
       - film-library:/var/lib/postgresql/data
     environment:
