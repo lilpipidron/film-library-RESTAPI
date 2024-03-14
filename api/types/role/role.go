@@ -1,4 +1,4 @@
-package types
+package role
 
 type Role int32
 
