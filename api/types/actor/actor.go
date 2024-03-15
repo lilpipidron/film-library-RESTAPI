@@ -6,9 +6,9 @@ import (
 )
 
 type Actor struct {
-	ID          int64
-	Name        string
-	Surname     string
-	Gender      gender.Gender
-	DateOfBirth time.Time
+	ID          int64         `json:"id"`
+	Name        string        `json:"name"`
+	Surname     string        `json:"surname"`
+	Gender      gender.Gender `json:"gender"`
+	DateOfBirth time.Time     `json:"date-of-birth"`
 }

@@ -1,8 +1,8 @@
 package gender
 
-type Gender int
+type Gender string
 
 const (
-	Male Gender = iota
-	Female
+	Male   Gender = "Male"
+	Female Gender = "Female"
 )

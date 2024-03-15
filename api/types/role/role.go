@@ -1,8 +1,8 @@
 package role
 
-type Role int32
+type Role string
 
 const (
-	Admin = iota
-	User
+	Admin Role = "Admin"
+	User  Role = "User"
 )
