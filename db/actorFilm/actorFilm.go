@@ -3,6 +3,7 @@ package actorFilm
 import (
 	"database/sql"
 	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
+	"log"
 	"strings"
 )
 
@@ -28,4 +29,28 @@ func (repository *Repository) AddNewFilmAndActors(filmID int64, actors []string)
 		}
 	}
 	return nil
+}
+
+func (repository *Repository) GetAllActorsID(filmID int64) ([]int64, error) {
+	query := "SELECT actor_id FROM actor_film WHERE film_id = $1"
+	rows, err := repository.Driver.Query(query, filmID)
+	if err != nil {
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(rows)
+	var actorsID []int64
+	for rows.Next() {
+		var id int64
+		err := rows.Scan(id)
+		if err != nil {
+			return nil, err
+		}
+		actorsID = append(actorsID, id)
+	}
+	return actorsID, nil
 }

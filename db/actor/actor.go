@@ -22,7 +22,7 @@ func (repository *Repository) AddNewActor(name, surname string, gender gender.Ge
 }
 
 func (repository *Repository) FindActorsByNameAndSurname(name, surname string) ([]*actor.Actor, error) {
-	query := "SELECT * FROM actors WHERE name LIKE '%' || $1 || '%' AND surname LIKE '%' || $2 || '%'"
+	query := "SELECT * FROM actors WHERE name LIKE '%' || $1 || '%' OR surname LIKE '%' || $2 || '%'"
 	rows, err := repository.Driver.Query(query, name, surname)
 	if err != nil {
 		return nil, err
