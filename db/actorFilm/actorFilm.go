@@ -3,7 +3,6 @@ package actorFilm
 import (
 	"database/sql"
 	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
-	"github.com/lilpipidron/vk-godeveloper-task/db/film"
 	"strings"
 )
 
@@ -11,13 +10,8 @@ type Repository struct {
 	Driver *sql.DB
 }
 
-func (repository *Repository) AddNewFilmAndActors(title string, actors []string) error {
-	filmRepository := &film.Repository{Driver: repository.Driver}
-	films, err := filmRepository.FindFilmByTitle(title)
-	if err != nil {
-		return err
-	}
-	filmID := films[0].ID
+func (repository *Repository) AddNewFilmAndActors(filmID int64, actors []string) error {
+
 	for _, actorInfo := range actors {
 		splitActor := strings.Split(actorInfo, " ")
 		actorRepository := &actor.Repository{Driver: repository.Driver}

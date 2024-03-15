@@ -20,7 +20,11 @@ func (repository *Repository) AddNewFilm(title, description string, releaseDate 
 	}
 
 	filmAndActors := &actorFilm.Repository{Driver: repository.Driver}
-	err = filmAndActors.AddNewFilmAndActors(title, actors)
+	films, err := repository.FindFilmByTitle(title)
+	if err != nil {
+		return err
+	}
+	err = filmAndActors.AddNewFilmAndActors(films[0].ID, actors)
 	if err != nil {
 		return err
 	}
