@@ -57,36 +57,36 @@ func (repository *Repository) DeleteActor(actorID int) error {
 
 }
 
-func (repository *Repository) ChangeActorName(id int, name string) error {
+func (repository *Repository) ChangeActorName(actorID int, name string) error {
 	query := "UPDATE actors set name = $1 where actor_id = $2"
-	_, err := repository.Driver.Exec(query, name, id)
+	_, err := repository.Driver.Exec(query, name, actorID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repository *Repository) ChangeActorSurname(id int, surname string) error {
+func (repository *Repository) ChangeActorSurname(actorID int, surname string) error {
 	query := "UPDATE actors set surname = $1 where actor_id = $2"
-	_, err := repository.Driver.Exec(query, surname, id)
+	_, err := repository.Driver.Exec(query, surname, actorID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repository *Repository) ChangeActorGender(id int, gender gender.Gender) error {
+func (repository *Repository) ChangeActorGender(actorID int, gender gender.Gender) error {
 	query := "UPDATE actors set gender = $1 where actor_id = $2"
-	_, err := repository.Driver.Exec(query, gender, id)
+	_, err := repository.Driver.Exec(query, gender, actorID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repository *Repository) ChangeActorDateOfBirth(id int, dateOfBirth time.Time) error {
+func (repository *Repository) ChangeActorDateOfBirth(actorID int, dateOfBirth time.Time) error {
 	query := "UPDATE actors set date_of_birth = $1 where actor_id = $2"
-	_, err := repository.Driver.Exec(query, dateOfBirth, id)
+	_, err := repository.Driver.Exec(query, dateOfBirth, actorID)
 	if err != nil {
 		return err
 	}
