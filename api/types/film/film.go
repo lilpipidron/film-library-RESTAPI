@@ -2,10 +2,10 @@ package film
 
 import "time"
 
-type film struct {
-	ID          int64
-	Title       string
-	Description string
-	ReleaseDate time.Time
-	Rating      float32
+type Film struct {
+	ID          int64     `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	ReleaseDate time.Time `json:"release-date"`
+	Rating      float32   `json:"rating"`
 }
