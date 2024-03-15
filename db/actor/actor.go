@@ -12,18 +12,6 @@ type Repository struct {
 	Driver *sql.DB
 }
 
-func (repository *Repository) FindActorByNameAndSurname(name, surname string) (*actor.Actor, error) {
-	query := "SELECT * FROM actors where name = $1 and surname = $2"
-	row := repository.Driver.QueryRow(query, name, surname)
-
-	actor := &actor.Actor{}
-	err := row.Scan(&actor.ID, &actor.Name, &actor.Surname, &actor.Gender, &actor.DateOfBirth)
-	if err != nil {
-		return nil, err
-	}
-	return actor, nil
-}
-
 func (repository *Repository) AddNewActor(name, surname string, gender gender.Gender, dateOfBirth time.Time) error {
 	query := "INSERT INTO actors (name, surname, gender, date_of_birth) VALUES ($1, $2, $3, $4)"
 	_, err := repository.Driver.Exec(query, name, surname, gender, dateOfBirth)
@@ -33,13 +21,74 @@ func (repository *Repository) AddNewActor(name, surname string, gender gender.Ge
 	return nil
 }
 
+func (repository *Repository) FindActorsByNameAndSurname(name, surname string) ([]*actor.Actor, error) {
+	query := "SELECT * FROM actors WHERE name LIKE '%' || $1 || '%' AND surname LIKE '%' || $2 || '%'"
+	rows, err := repository.Driver.Query(query, name, surname)
+	if err != nil {
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(rows)
+
+	var actors []*actor.Actor
+	for rows.Next() {
+		a := &actor.Actor{}
+		err := rows.Scan(&a.ID, &a.Name, &a.Surname, &a.Gender, &a.DateOfBirth)
+		if err != nil {
+			return nil, err
+		}
+		actors = append(actors, a)
+	}
+
+	return actors, nil
+}
+
 func (repository *Repository) DeleteActor(actorID int) error {
-	query := "DELETE FROM actors where actor_id = $1"
+	query := "DELETE FROM actors WHERE actor_id = $1"
 	_, err := repository.Driver.Exec(query, actorID)
-	log.Println(err)
 	if err != nil {
 		return err
 	}
 	return nil
 
+}
+
+func (repository *Repository) ChangeActorName(id int, name string) error {
+	query := "UPDATE actors set name = $1 where actor_id = $2"
+	_, err := repository.Driver.Exec(query, name, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *Repository) ChangeActorSurname(id int, surname string) error {
+	query := "UPDATE actors set surname = $1 where actor_id = $2"
+	_, err := repository.Driver.Exec(query, surname, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *Repository) ChangeActorGender(id int, gender gender.Gender) error {
+	query := "UPDATE actors set gender = $1 where actor_id = $2"
+	_, err := repository.Driver.Exec(query, gender, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *Repository) ChangeActorDateOfBirth(id int, dateOfBirth time.Time) error {
+	query := "UPDATE actors set date_of_birth = $1 where actor_id = $2"
+	_, err := repository.Driver.Exec(query, dateOfBirth, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
