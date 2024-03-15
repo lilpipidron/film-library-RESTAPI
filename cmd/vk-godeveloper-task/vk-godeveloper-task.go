@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/postgres"
@@ -38,6 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	m, err := migrate.NewWithDatabaseInstance("file://db/migration",
 		dbname,
@@ -48,6 +50,10 @@ func main() {
 	}
 
 	if err := m.Up(); err != nil {
-		log.Fatal(err)
+		if !errors.Is(err, migrate.ErrNoChange) {
+			log.Fatal(err)
+		}
 	}
+
+	fmt.Println("Success connected")
 }
