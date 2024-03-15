@@ -3,6 +3,7 @@ package film
 import (
 	"database/sql"
 	"github.com/lilpipidron/vk-godeveloper-task/api/types/film"
+	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 	"log"
 	"time"
 )
@@ -18,6 +19,11 @@ func (repository *Repository) AddNewFilm(title, description string, releaseDate 
 		return err
 	}
 
+	filmAndActors := &actorFilm.Repository{Driver: repository.Driver}
+	err = filmAndActors.AddNewFilmAndActors(title, actors)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
