@@ -11,21 +11,19 @@ import (
 	"time"
 )
 
-func AddActorInMux(mux *http.ServeMux, repository actor.Repository) {
-	mux.HandleFunc("/actor", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			GetActorByNameAndSurname(w, r, &repository)
-		} else if r.Method == http.MethodPut {
-			AddNewActor(w, r, &repository)
-		} else if r.Method == http.MethodDelete {
-			DeleteActorByID(w, r, &repository)
-		} else if r.Method == http.MethodPost {
-			ChangeInformationAboutActor(w, r, &repository)
-		} else {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			log.Println("Method not allowed", r.Method)
-		}
-	})
+func Handler(w http.ResponseWriter, r *http.Request, repository actor.Repository) {
+	if r.Method == http.MethodGet {
+		GetActorByNameAndSurname(w, r, &repository)
+	} else if r.Method == http.MethodPut {
+		AddNewActor(w, r, &repository)
+	} else if r.Method == http.MethodDelete {
+		DeleteActorByID(w, r, &repository)
+	} else if r.Method == http.MethodPost {
+		ChangeInformationAboutActor(w, r, &repository)
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		log.Println("Method not allowed", r.Method)
+	}
 }
 
 func GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request, repository *actor.Repository) {

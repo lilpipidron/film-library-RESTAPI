@@ -2,7 +2,7 @@ package film
 
 import (
 	"encoding/json"
-	film2 "github.com/lilpipidron/vk-godeveloper-task/api/types/film"
+	filmStruct "github.com/lilpipidron/vk-godeveloper-task/api/types/film"
 	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 	"github.com/lilpipidron/vk-godeveloper-task/db/film"
 	"log"
@@ -13,21 +13,19 @@ import (
 	"time"
 )
 
-func AddFilmInMux(mux *http.ServeMux, repository film.Repository) {
-	mux.HandleFunc("/film", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			GetMediator(w, r, &repository)
-		} else if r.Method == http.MethodPut {
-			AddNewFilm(w, r, &repository)
-		} else if r.Method == http.MethodDelete {
-			DeleteFilmByID(w, r, &repository)
-		} else if r.Method == http.MethodPost {
+func Handler(w http.ResponseWriter, r *http.Request, repository film.Repository) {
+	if r.Method == http.MethodGet {
+		GetMediator(w, r, &repository)
+	} else if r.Method == http.MethodPut {
+		AddNewFilm(w, r, &repository)
+	} else if r.Method == http.MethodDelete {
+		DeleteFilmByID(w, r, &repository)
+	} else if r.Method == http.MethodPost {
 
-		} else {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			log.Println("Method not allowed", r.Method)
-		}
-	})
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		log.Println("Method not allowed", r.Method)
+	}
 }
 func GetMediator(w http.ResponseWriter, r *http.Request, repository *film.Repository) {
 	queryParams := r.URL.Query()
@@ -105,30 +103,30 @@ func GetAllFilms(w http.ResponseWriter, queryParams url.Values, repository *film
 	switch sortField {
 	case "ID":
 		if sortType == "asc" {
-			film2.ByIDAsc(films)
+			filmStruct.ByIDAsc(films)
 		} else {
-			film2.ByIDDesc(films)
+			filmStruct.ByIDDesc(films)
 		}
 	case "title":
 		if sortType == "asc" {
-			film2.ByTitleAsc(films)
+			filmStruct.ByTitleAsc(films)
 		} else {
-			film2.ByTitleDesc(films)
+			filmStruct.ByTitleDesc(films)
 		}
 	case "releaseDate":
 		if sortType == "asc" {
-			film2.ByReleaseDateAsc(films)
+			filmStruct.ByReleaseDateAsc(films)
 		} else {
-			film2.ByReleaseDateDesc(films)
+			filmStruct.ByReleaseDateDesc(films)
 		}
 	case "rating":
 		if sortType == "asc" {
-			film2.ByRatingAsc(films)
+			filmStruct.ByRatingAsc(films)
 		} else {
-			film2.ByRatingDesc(films)
+			filmStruct.ByRatingDesc(films)
 		}
 	default:
-		film2.ByRatingDesc(films)
+		filmStruct.ByRatingDesc(films)
 	}
 	filmsJSON, err := json.Marshal(films)
 	if err != nil {

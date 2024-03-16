@@ -1,4 +1,3 @@
-CREATE TYPE user_role AS ENUM ('user', 'admin');
 CREATE TYPE gender AS ENUM ('male', 'female');
 
 CREATE TABLE IF NOT EXISTS actors
