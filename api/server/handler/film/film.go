@@ -2,10 +2,12 @@ package film
 
 import (
 	"encoding/json"
+	film2 "github.com/lilpipidron/vk-godeveloper-task/api/types/film"
 	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 	"github.com/lilpipidron/vk-godeveloper-task/db/film"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -32,7 +34,7 @@ func GetMediator(w http.ResponseWriter, r *http.Request, repository *film.Reposi
 	title := queryParams.Get("title")
 	actor := queryParams.Get("actor")
 	if title == "" && actor == "" {
-		GetAllFilms(w, repository)
+		GetAllFilms(w, queryParams, repository)
 		return
 	}
 
@@ -90,13 +92,43 @@ func GetActors(w http.ResponseWriter, repository *film.Repository, title string)
 
 	log.Println("request completed")
 }
-func GetAllFilms(w http.ResponseWriter, repository *film.Repository) {
+func GetAllFilms(w http.ResponseWriter, queryParams url.Values, repository *film.Repository) {
 	log.Println("request: get all films and sort")
 	films, err := repository.GetAllFilms()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
 		return
+	}
+	sortField := queryParams.Get("sortField")
+	sortType := queryParams.Get("sortType")
+	switch sortField {
+	case "ID":
+		if sortType == "asc" {
+			film2.ByIDAsc(films)
+		} else {
+			film2.ByIDDesc(films)
+		}
+	case "title":
+		if sortType == "asc" {
+			film2.ByTitleAsc(films)
+		} else {
+			film2.ByTitleDesc(films)
+		}
+	case "releaseDate":
+		if sortType == "asc" {
+			film2.ByReleaseDateAsc(films)
+		} else {
+			film2.ByReleaseDateDesc(films)
+		}
+	case "rating":
+		if sortType == "asc" {
+			film2.ByRatingAsc(films)
+		} else {
+			film2.ByRatingDesc(films)
+		}
+	default:
+		film2.ByRatingDesc(films)
 	}
 	filmsJSON, err := json.Marshal(films)
 	if err != nil {
