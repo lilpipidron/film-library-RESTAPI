@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	host     = "localhost"
+	host     = "film_library"
 	port     = 5432
 	user     = "postgres"
 	password = "postgres"
@@ -45,7 +45,6 @@ func main() {
 	m, err := migrate.NewWithDatabaseInstance("file://db/migration",
 		dbname,
 		driver)
-
 	if err != nil {
 		log.Fatal(err)
 	}

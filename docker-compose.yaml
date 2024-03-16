@@ -1,25 +1,18 @@
 version: "3.9"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  vk-godeveloper-task:
+    build: ./
+    command: ./vk-godeveloper-task
     ports:
-      - "8080:8008"
+      - "8080:8080"
     depends_on:
-      - db
+      - film_library
 
-  db:
-    image: postgres:14
+  film_library:
+    restart: always
+    image: postgres:13.3
     ports:
       - "5432:5432"
-    volumes:
-      - film-library:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: vk-film-library
-
-volumes:
-  film-library:
+      - POSTGRES_PASSWORD=postgres

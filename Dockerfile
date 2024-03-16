@@ -1,16 +1,12 @@
-# Этап сборки приложения
 FROM golang:latest AS builder
 
 WORKDIR /app
 
 COPY . /app
+
+RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o vk-godeveloper-task ./cmd/vk-godeveloper-task/vk-godeveloper-task.go
 
-# Этап финальной сборки образа
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=builder /app/vk-godeveloper-task .
-CMD ["./vk-godeveloper-task"]
+EXPOSE 8080
 
-VOLUME film-library:/var/lib/postgresql/data
+CMD ["./vk-godeveloper-task"]
