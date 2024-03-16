@@ -9,6 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/lib/pq"
+	"github.com/lilpipidron/vk-godeveloper-task/api/server"
 	"log"
 )
 
@@ -55,5 +56,9 @@ func main() {
 		}
 	}
 
-	fmt.Println("Success connected")
+	log.Println("success connected")
+
+	if err := server.Start(db); err != nil {
+		log.Fatal(err)
+	}
 }
