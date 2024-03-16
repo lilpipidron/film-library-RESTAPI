@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
 	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
+	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
-
-type Handler struct{}
 
 func AddActorInMux(mux *http.ServeMux, repository actor.Repository) {
 	mux.HandleFunc("/actor", func(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +56,6 @@ func GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request, repository
 	}
 
 	log.Println("request completed")
-
 }
 
 func AddNewActor(w http.ResponseWriter, r *http.Request, repository *actor.Repository) {
@@ -86,6 +84,13 @@ func DeleteActorByID(w http.ResponseWriter, r *http.Request, repository *actor.R
 	log.Println("request: delete actor by id")
 	queryParams := r.URL.Query()
 	id, err := strconv.ParseInt(queryParams.Get("id"), 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+	actorFilmRepository := &actorFilm.Repository{Driver: repository.Driver}
+	err = actorFilmRepository.DeleteActor(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)

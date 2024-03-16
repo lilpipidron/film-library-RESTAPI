@@ -46,11 +46,29 @@ func (repository *Repository) GetAllActorsID(filmID int64) ([]int64, error) {
 	var actorsID []int64
 	for rows.Next() {
 		var id int64
-		err := rows.Scan(id)
+		err := rows.Scan(&id)
 		if err != nil {
 			return nil, err
 		}
 		actorsID = append(actorsID, id)
 	}
 	return actorsID, nil
+}
+
+func (repository *Repository) DeleteFilm(filmID int64) error {
+	query := "DELETE FROM actor_film WHERE film_id = $1"
+	_, err := repository.Driver.Exec(query, filmID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *Repository) DeleteActor(actorID int64) error {
+	query := "DELETE FROM actor_film WHERE actor_id = $1"
+	_, err := repository.Driver.Exec(query, actorID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
