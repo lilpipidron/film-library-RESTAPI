@@ -47,7 +47,7 @@ func (repository *Repository) FindActorsByNameAndSurname(name, surname string) (
 	return actors, nil
 }
 
-func (repository *Repository) DeleteActor(actorID int) error {
+func (repository *Repository) DeleteActor(actorID int64) error {
 	query := "DELETE FROM actors WHERE actor_id = $1"
 	_, err := repository.Driver.Exec(query, actorID)
 	if err != nil {
@@ -57,7 +57,7 @@ func (repository *Repository) DeleteActor(actorID int) error {
 
 }
 
-func (repository *Repository) ChangeActorName(actorID int, name string) error {
+func (repository *Repository) ChangeActorName(actorID int64, name string) error {
 	query := "UPDATE actors set name = $1 where actor_id = $2"
 	_, err := repository.Driver.Exec(query, name, actorID)
 	if err != nil {
@@ -66,7 +66,7 @@ func (repository *Repository) ChangeActorName(actorID int, name string) error {
 	return nil
 }
 
-func (repository *Repository) ChangeActorSurname(actorID int, surname string) error {
+func (repository *Repository) ChangeActorSurname(actorID int64, surname string) error {
 	query := "UPDATE actors set surname = $1 where actor_id = $2"
 	_, err := repository.Driver.Exec(query, surname, actorID)
 	if err != nil {
@@ -75,7 +75,7 @@ func (repository *Repository) ChangeActorSurname(actorID int, surname string) er
 	return nil
 }
 
-func (repository *Repository) ChangeActorGender(actorID int, gender gender.Gender) error {
+func (repository *Repository) ChangeActorGender(actorID int64, gender gender.Gender) error {
 	query := "UPDATE actors set gender = $1 where actor_id = $2"
 	_, err := repository.Driver.Exec(query, gender, actorID)
 	if err != nil {
@@ -84,7 +84,7 @@ func (repository *Repository) ChangeActorGender(actorID int, gender gender.Gende
 	return nil
 }
 
-func (repository *Repository) ChangeActorDateOfBirth(actorID int, dateOfBirth time.Time) error {
+func (repository *Repository) ChangeActorDateOfBirth(actorID int64, dateOfBirth time.Time) error {
 	query := "UPDATE actors set date_of_birth = $1 where actor_id = $2"
 	_, err := repository.Driver.Exec(query, dateOfBirth, actorID)
 	if err != nil {
