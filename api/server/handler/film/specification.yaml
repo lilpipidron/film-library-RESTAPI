@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Film Management API
+  version: 1.0.0
+  description: API for managing film and actor information.
+servers:
+  - url: http://localhost:8080
+paths:
+  /films:
+    get:
+      summary: Get films by title or actor name and surname
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+        - in: query
+          name: actor
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Films found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+        '400':
+          description: Bad request
+    put:
+      summary: Add new film
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Film'
+      responses:
+        '200':
+          description: Film added
+        '400':
+          description: Bad request
+    delete:
+      summary: Delete film by ID
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Film deleted
+        '400':
+          description: Bad request
+  /films/actors:
+    get:
+      summary: Get film's actors
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Actors found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Actor'
+        '400':
+          description: Bad request
+  /films/all:
+    get:
+      summary: Get all films and sort
+      parameters:
+        - in: query
+          name: sortField
+          schema:
+            type: string
+            enum: [ID, title, releaseDate, rating]
+        - in: query
+          name: sortType
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Films found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+        '400':
+          description: Bad request
+components:
+  schemas:
+    Film:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        releaseDate:
+          type: string
+          format: date
+        rating:
+          type: number
+          format: float
+    Actor:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        surname:
+          type: string
+        gender:
+          type: string
+          enum: [male, female]
+        dateOfBirth:
+          type: string
+          format: date
+    ActorWithFilms:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        surname:
+          type: string
+        gender:
+          type: string
+          enum: [ male, female ]
+        dateOfBirth:
+          type: string
+          format: date
+        films:
+          type: array
+          items:
+            $ref: '#/components/schemas/Film'

@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+ title: Actor Management API
+ version: 1.0.0
+ description: API for managing actor information.
+servers:
+ - url: http://localhost:8080
+paths:
+ /actors:
+    get:
+      summary: Get actor by name and surname
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: surname
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Actor found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/Actor'
+        '400':
+          description: Bad request
+    put:
+      summary: Add new actor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Actor added
+        '400':
+          description: Bad request
+    delete:
+      summary: Delete actor by ID
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Actor deleted
+        '400':
+          description: Bad request
+    post:
+      summary: Change information about an actor
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Actor'
+      responses:
+        '200':
+          description: Actor information updated
+        '400':
+          description: Bad request
+components:
+ schemas:
+    Actor:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        surname:
+          type: string
+        gender:
+          type: string
+          enum: [male, female]
+        dateOfBirth:
+          type: string
+          format: date
