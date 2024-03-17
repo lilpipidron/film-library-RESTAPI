@@ -2,10 +2,10 @@ package login
 
 import (
 	"database/sql"
-	actorHandler "github.com/lilpipidron/vk-godeveloper-task/api/server/handler/actor"
-	filmHandler "github.com/lilpipidron/vk-godeveloper-task/api/server/handler/film"
 	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
 	"github.com/lilpipidron/vk-godeveloper-task/db/film"
+	actorHandler "github.com/lilpipidron/vk-godeveloper-task/server/handler/actor"
+	filmHandler "github.com/lilpipidron/vk-godeveloper-task/server/handler/film"
 	"log"
 	"net/http"
 )

@@ -2,7 +2,7 @@ package server
 
 import (
 	"database/sql"
-	"github.com/lilpipidron/vk-godeveloper-task/api/server/handler/login"
+	"github.com/lilpipidron/vk-godeveloper-task/server/handler/login"
 	"log"
 	"net/http"
 )

@@ -9,7 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/lib/pq"
-	"github.com/lilpipidron/vk-godeveloper-task/api/server"
+	"github.com/lilpipidron/vk-godeveloper-task/server"
 	"log"
 )
 
