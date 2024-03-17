@@ -44,16 +44,24 @@ func (app *Application) handleUserRequest(w http.ResponseWriter, r *http.Request
 	}
 	actorRepository := actor.NewActorRepository(db)
 	filmRepository := film.NewFilmRepository(db)
-	actorHandler.Handler(w, r, *actorRepository)
-	filmResponse := filmHandler.NewFilmResponse(*filmRepository)
-	filmResponse.Handler(w, r)
+
+	actorHandlerRepository := actorHandler.NewActorRepository(*actorRepository)
+	actorHandlerRepository.Handler(w, r)
+
+	filmHandlerRepository := filmHandler.NewFilmRepository(*filmRepository)
+	filmHandlerRepository.Handler(w, r)
+
 	log.Println("Authorized access for user")
 }
 func (*Application) handleAdminRequest(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	actorRepository := actor.NewActorRepository(db)
 	filmRepository := film.NewFilmRepository(db)
-	actorHandler.Handler(w, r, *actorRepository)
-	filmResponse := filmHandler.NewFilmResponse(*filmRepository)
-	filmResponse.Handler(w, r)
+
+	actorHandlerRepository := actorHandler.NewActorRepository(*actorRepository)
+	actorHandlerRepository.Handler(w, r)
+
+	filmHandlerRepository := filmHandler.NewFilmRepository(*filmRepository)
+	filmHandlerRepository.Handler(w, r)
+
 	log.Println("Authorized access for admin")
 }

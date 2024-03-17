@@ -11,22 +11,40 @@ import (
 	"time"
 )
 
-func Handler(w http.ResponseWriter, r *http.Request, repository actor.Repository) {
+type ActorHandler interface {
+	Handler(w http.ResponseWriter, r *http.Request) int
+	GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request) int
+	AddNewActor(w http.ResponseWriter, r *http.Request) int
+	DeleteActorByID(w http.ResponseWriter, r *http.Request) int
+	ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request) int
+}
+
+type ActorRepository struct {
+	repository actor.Repository
+}
+
+func NewActorRepository(repository actor.Repository) *ActorRepository {
+	return &ActorRepository{repository: repository}
+}
+
+func (actorRepository *ActorRepository) Handler(w http.ResponseWriter, r *http.Request) int {
 	if r.Method == http.MethodGet {
-		GetActorByNameAndSurname(w, r, &repository)
+		return actorRepository.GetActorByNameAndSurname(w, r)
 	} else if r.Method == http.MethodPut {
-		AddNewActor(w, r, &repository)
+		return actorRepository.AddNewActor(w, r)
 	} else if r.Method == http.MethodDelete {
-		DeleteActorByID(w, r, &repository)
+		return actorRepository.DeleteActorByID(w, r)
 	} else if r.Method == http.MethodPost {
-		ChangeInformationAboutActor(w, r, &repository)
+		return actorRepository.ChangeInformationAboutActor(w, r)
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		log.Println("Method not allowed", r.Method)
+		return http.StatusMethodNotAllowed
 	}
 }
 
-func GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request, repository *actor.Repository) {
+func (actorRepository *ActorRepository) GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request) int {
+	repository := actorRepository.repository
 	log.Println("request: get actor by name and surname")
 	queryParams := r.URL.Query()
 	name := queryParams.Get("name")
@@ -35,14 +53,14 @@ func GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request, repository
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 
 	actorJSON, err := json.Marshal(actor)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -50,13 +68,15 @@ func GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request, repository
 	_, err = w.Write(actorJSON)
 	if err != nil {
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 
 	log.Println("request completed")
+	return http.StatusOK
 }
 
-func AddNewActor(w http.ResponseWriter, r *http.Request, repository *actor.Repository) {
+func (actorRepository *ActorRepository) AddNewActor(w http.ResponseWriter, r *http.Request) int {
+	repository := actorRepository.repository
 	log.Println("request: put new actor")
 	queryParams := r.URL.Query()
 	name := queryParams.Get("name")
@@ -66,52 +86,56 @@ func AddNewActor(w http.ResponseWriter, r *http.Request, repository *actor.Repos
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	err = repository.AddNewActor(name, surname, actorGender, dateOfBirth)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	w.WriteHeader(http.StatusOK)
 	log.Println("request completed")
+	return http.StatusOK
 }
 
-func DeleteActorByID(w http.ResponseWriter, r *http.Request, repository *actor.Repository) {
+func (actorRepository *ActorRepository) DeleteActorByID(w http.ResponseWriter, r *http.Request) int {
+	repository := actorRepository.repository
 	log.Println("request: delete actor by id")
 	queryParams := r.URL.Query()
 	id, err := strconv.ParseInt(queryParams.Get("id"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	actorFilmRepository := actorFilm.NewActorFilmRepository(repository.DB)
 	err = actorFilmRepository.DeleteActor(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	err = repository.DeleteActor(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	w.WriteHeader(http.StatusOK)
 	log.Println("request completed")
+	return http.StatusOK
 }
 
-func ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request, repository *actor.Repository) {
+func (actorRepository *ActorRepository) ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request) int {
+	repository := actorRepository.repository
 	log.Println("request: post information about actor")
 	queryParams := r.URL.Query()
 	id, err := strconv.ParseInt(queryParams.Get("id"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	name := queryParams.Get("name")
 	surname := queryParams.Get("surname")
@@ -120,14 +144,14 @@ func ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request, reposit
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println(err)
-		return
+		return http.StatusBadRequest
 	}
 	if name != "" {
 		err = repository.ChangeActorName(id, name)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
-			return
+			return http.StatusBadRequest
 		}
 	}
 	if surname != "" {
@@ -135,7 +159,7 @@ func ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request, reposit
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
-			return
+			return http.StatusBadRequest
 		}
 	}
 	if actorGender != "" {
@@ -143,7 +167,7 @@ func ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request, reposit
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
-			return
+			return http.StatusBadRequest
 		}
 	}
 	if dateOfBirthString != "" {
@@ -151,15 +175,16 @@ func ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request, reposit
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
-			return
+			return http.StatusBadRequest
 		}
 		err = repository.ChangeActorDateOfBirth(id, dateOfBirth)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
-			return
+			return http.StatusBadRequest
 		}
 	}
 	w.WriteHeader(http.StatusOK)
 	log.Println("request completed")
+	return http.StatusOK
 }
