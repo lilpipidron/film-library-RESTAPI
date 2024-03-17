@@ -3,11 +3,13 @@ version: "3.9"
 services:
   vk-godeveloper-task:
     build: ./
-    command: ./vk-godeveloper-task
+    command: ./wait-for-postgres.sh film_library ./vk-godeveloper-task
     ports:
       - "8080:8080"
     depends_on:
       - film_library
+    environment:
+      - POSTGRES_PASSWORD=postgres
 
   film_library:
     restart: always
@@ -16,3 +18,7 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=film_library
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

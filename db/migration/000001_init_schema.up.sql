@@ -1,4 +1,3 @@
-CREATE DATABASE film_library OWNER postgres;
 CREATE TYPE gender AS ENUM ('male', 'female');
 
 CREATE TABLE IF NOT EXISTS actors
