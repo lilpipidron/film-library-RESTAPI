@@ -24,9 +24,10 @@ func TestFilmHandler_GetFilmByTitle(t *testing.T) {
 	}
 }
 
-func TestFilmHandler_addAndDeleteFilm(t *testing.T) {
+func TestFilmHandler_deleteFilm(t *testing.T) {
 	c := gomock.NewController(t)
 	defer c.Finish()
+
 	req := httptest.NewRequest(http.MethodDelete, "/film?id=1", nil)
 	w := httptest.NewRecorder()
 	filmRequest := mock_film_request.NewMockFilmHandler(c)
@@ -42,6 +43,7 @@ func TestFilmHandler_addAndDeleteFilm(t *testing.T) {
 func TestFilmHandler_methodNotAllowed(t *testing.T) {
 	c := gomock.NewController(t)
 	defer c.Finish()
+
 	req := httptest.NewRequest(http.MethodConnect, "/film?id=1", nil)
 	w := httptest.NewRecorder()
 	filmRequest := mock_film_request.NewMockFilmHandler(c)
