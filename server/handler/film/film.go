@@ -182,7 +182,7 @@ func DeleteFilmByID(w http.ResponseWriter, r *http.Request, repository *film.Rep
 		return
 	}
 
-	actorFilmRepository := &actorFilm.Repository{Driver: repository.Driver}
+	actorFilmRepository := actorFilm.NewActorFilmRepository(repository.DB)
 	err = actorFilmRepository.DeleteFilm(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

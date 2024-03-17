@@ -42,16 +42,16 @@ func (app *Application) handleUserRequest(w http.ResponseWriter, r *http.Request
 		log.Println("Method not allowed", r.Method)
 		return
 	}
-	actorRepository := actor.Repository{Driver: db}
-	filmRepository := film.Repository{Driver: db}
-	actorHandler.Handler(w, r, actorRepository)
-	filmHandler.Handler(w, r, filmRepository)
+	actorRepository := actor.NewActorRepository(db)
+	filmRepository := film.NewFilmRepository(db)
+	actorHandler.Handler(w, r, *actorRepository)
+	filmHandler.Handler(w, r, *filmRepository)
 	log.Println("Authorized access for user")
 }
 func (*Application) handleAdminRequest(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	actorRepo := actor.Repository{Driver: db}
-	filmRepo := film.Repository{Driver: db}
-	actorHandler.Handler(w, r, actorRepo)
-	filmHandler.Handler(w, r, filmRepo)
+	actorRepository := actor.NewActorRepository(db)
+	filmRepository := film.NewFilmRepository(db)
+	actorHandler.Handler(w, r, *actorRepository)
+	filmHandler.Handler(w, r, *filmRepository)
 	log.Println("Authorized access for admin")
 }
