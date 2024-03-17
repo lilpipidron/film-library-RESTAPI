@@ -87,7 +87,7 @@ func TestFilmRepository_addAndFindFilm(t *testing.T) {
 	}
 
 	if len(films) != 1 {
-		t.Errorf("Expected to find 1 actor, found %d", len(films))
+		t.Errorf("Expected to find 1 film, found %d", len(films))
 	}
 }
 
@@ -202,6 +202,50 @@ func TestFilmRepository_addFilmChangeTitle(t *testing.T) {
 	}
 
 	if len(films) != 1 {
-		t.Errorf("Expected to find 1 actor, found %d", len(films))
+		t.Errorf("Expected to find 1 film, found %d", len(films))
+	}
+}
+
+func TestFilmRepository_addTwoFilmsAndGetThem(t *testing.T) {
+	film1 := filmType.Film{
+		Title:       "title1",
+		Description: "description1",
+		ReleaseDate: time.Now(),
+		Rating:      3.2,
+	}
+	film2 := filmType.Film{
+		Title:       "title2",
+		Description: "description2",
+		ReleaseDate: time.Now(),
+		Rating:      3.2,
+	}
+
+	c := gomock.NewController(t)
+	defer c.Finish()
+
+	db := mock_film.NewMockFilmRepository(c)
+
+	db.EXPECT().AddNewFilm(film1.Title, film1.Description, film1.ReleaseDate, film1.Rating, gomock.Any()).Return(nil)
+
+	db.EXPECT().AddNewFilm(film2.Title, film2.Description, film2.ReleaseDate, film2.Rating, gomock.Any()).Return(nil)
+
+	db.EXPECT().GetAllFilms().Return([]*filmType.Film{&film1, &film2}, nil)
+
+	err := db.AddNewFilm(film1.Title, film1.Description, film1.ReleaseDate, film1.Rating, []string{"John Doe"})
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	err = db.AddNewFilm(film2.Title, film2.Description, film2.ReleaseDate, film2.Rating, []string{"John Doe"})
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	films, err := db.GetAllFilms()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+	if len(films) != 2 {
+		t.Errorf("Expected to find 2 films, found %d", len(films))
 	}
 }
