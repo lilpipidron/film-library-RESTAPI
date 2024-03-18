@@ -1,12 +1,13 @@
 package actor
 
 import (
+	"testing"
+	"time"
+
 	actor2 "github.com/lilpipidron/vk-godeveloper-task/api/types/actor"
 	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
 	mock_actor "github.com/lilpipidron/vk-godeveloper-task/mocks/db/actor"
 	"go.uber.org/mock/gomock"
-	"testing"
-	"time"
 )
 
 func TestActorRepository_addNewActor(t *testing.T) {
@@ -57,6 +58,7 @@ func TestActorRepository_addAndDeleteActor(t *testing.T) {
 		t.Errorf("Failed to delete actor: %v", err)
 	}
 }
+
 func TestActorRepository_addAndFindActor(t *testing.T) {
 	actor := actor2.Actor{
 		Name:        "name",

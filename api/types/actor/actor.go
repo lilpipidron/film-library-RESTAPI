@@ -1,9 +1,10 @@
 package actor
 
 import (
+	"time"
+
 	"github.com/lilpipidron/vk-godeveloper-task/api/types/film"
 	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
-	"time"
 )
 
 type Actor struct {

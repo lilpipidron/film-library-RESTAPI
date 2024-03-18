@@ -2,16 +2,17 @@ package actor
 
 import (
 	"encoding/json"
-	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
-	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
-	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
+	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
+	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 )
 
-type ActorHandler interface {
+type Handler interface {
 	Handler(w http.ResponseWriter, r *http.Request) int
 	GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request) int
 	AddNewActor(w http.ResponseWriter, r *http.Request) int
@@ -19,31 +20,33 @@ type ActorHandler interface {
 	ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request) int
 }
 
-type ActorRepository struct {
+type Repository struct {
 	repository actor.Repository
 }
 
-func NewActorRepository(repository actor.Repository) *ActorRepository {
-	return &ActorRepository{repository: repository}
+func NewActorRepository(repository actor.Repository) *Repository {
+	return &Repository{repository: repository}
 }
 
-func (actorRepository *ActorRepository) Handler(w http.ResponseWriter, r *http.Request) int {
-	if r.Method == http.MethodGet {
+func (actorRepository *Repository) Handler(w http.ResponseWriter, r *http.Request) int {
+	switch r.Method {
+	case http.MethodGet:
 		return actorRepository.GetActorByNameAndSurname(w, r)
-	} else if r.Method == http.MethodPut {
+	case http.MethodPut:
 		return actorRepository.AddNewActor(w, r)
-	} else if r.Method == http.MethodDelete {
+	case http.MethodDelete:
 		return actorRepository.DeleteActorByID(w, r)
-	} else if r.Method == http.MethodPost {
+	case http.MethodPost:
 		return actorRepository.ChangeInformationAboutActor(w, r)
-	} else {
+	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		log.Println("Method not allowed", r.Method)
+
 		return http.StatusMethodNotAllowed
 	}
 }
 
-func (actorRepository *ActorRepository) GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request) int {
+func (actorRepository *Repository) GetActorByNameAndSurname(w http.ResponseWriter, r *http.Request) int {
 	repository := actorRepository.repository
 	log.Println("request: get actor by name and surname")
 	queryParams := r.URL.Query()
@@ -75,7 +78,7 @@ func (actorRepository *ActorRepository) GetActorByNameAndSurname(w http.Response
 	return http.StatusOK
 }
 
-func (actorRepository *ActorRepository) AddNewActor(w http.ResponseWriter, r *http.Request) int {
+func (actorRepository *Repository) AddNewActor(w http.ResponseWriter, r *http.Request) int {
 	repository := actorRepository.repository
 	log.Println("request: put new actor")
 	queryParams := r.URL.Query()
@@ -99,7 +102,7 @@ func (actorRepository *ActorRepository) AddNewActor(w http.ResponseWriter, r *ht
 	return http.StatusOK
 }
 
-func (actorRepository *ActorRepository) DeleteActorByID(w http.ResponseWriter, r *http.Request) int {
+func (actorRepository *Repository) DeleteActorByID(w http.ResponseWriter, r *http.Request) int {
 	repository := actorRepository.repository
 	log.Println("request: delete actor by id")
 	queryParams := r.URL.Query()
@@ -127,7 +130,7 @@ func (actorRepository *ActorRepository) DeleteActorByID(w http.ResponseWriter, r
 	return http.StatusOK
 }
 
-func (actorRepository *ActorRepository) ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request) int {
+func (actorRepository *Repository) ChangeInformationAboutActor(w http.ResponseWriter, r *http.Request) int {
 	repository := actorRepository.repository
 	log.Println("request: post information about actor")
 	queryParams := r.URL.Query()

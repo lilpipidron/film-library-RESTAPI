@@ -4,13 +4,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
+
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/lib/pq"
 	"github.com/lilpipidron/vk-godeveloper-task/server"
-	"log"
 )
 
 const (
@@ -30,6 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func() {
 		if err := db.Close(); err != nil {
 			log.Fatal(err)
@@ -42,14 +44,18 @@ func main() {
 	}
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
-	m, err := migrate.NewWithDatabaseInstance("file://db/migration",
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	migration, err := migrate.NewWithDatabaseInstance("file://db/migration",
 		dbname,
 		driver)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := m.Up(); err != nil {
+	if err := migration.Up(); err != nil {
 		if !errors.Is(err, migrate.ErrNoChange) {
 			log.Fatal(err)
 		}

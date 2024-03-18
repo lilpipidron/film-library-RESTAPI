@@ -2,10 +2,11 @@ package actor
 
 import (
 	"database/sql"
-	"github.com/lilpipidron/vk-godeveloper-task/api/types/actor"
-	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
 	"log"
 	"time"
+
+	"github.com/lilpipidron/vk-godeveloper-task/api/types/actor"
+	"github.com/lilpipidron/vk-godeveloper-task/api/types/gender"
 )
 
 type ActorRepository interface {
@@ -100,7 +101,6 @@ func (repository *Repository) DeleteActor(actorID int64) error {
 		return err
 	}
 	return nil
-
 }
 
 func (repository *Repository) ChangeActorName(actorID int64, name string) error {

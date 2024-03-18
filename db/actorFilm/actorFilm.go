@@ -2,9 +2,10 @@ package actorFilm
 
 import (
 	"database/sql"
-	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
 	"log"
 	"strings"
+
+	"github.com/lilpipidron/vk-godeveloper-task/db/actor"
 )
 
 type Repository struct {

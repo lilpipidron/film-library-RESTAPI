@@ -2,15 +2,16 @@ package film
 
 import (
 	"encoding/json"
-	filmStruct "github.com/lilpipidron/vk-godeveloper-task/api/types/film"
-	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
-	"github.com/lilpipidron/vk-godeveloper-task/db/film"
 	"log"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	filmStruct "github.com/lilpipidron/vk-godeveloper-task/api/types/film"
+	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
+	"github.com/lilpipidron/vk-godeveloper-task/db/film"
 )
 
 type FilmHandler interface {
@@ -24,37 +25,37 @@ type FilmHandler interface {
 	ChangeInformationAboutFilm(w http.ResponseWriter, r *http.Request) int
 }
 
-type FilmRepository struct {
+type Repository struct {
 	repository film.Repository
 }
 
-func NewFilmRepository(repository film.Repository) *FilmRepository {
-	return &FilmRepository{repository: repository}
+func NewFilmRepository(repository film.Repository) *Repository {
+	return &Repository{repository: repository}
 }
 
-func (filmRepository *FilmRepository) Handler(w http.ResponseWriter, r *http.Request) int {
-	if r.Method == http.MethodGet {
+func (filmRepository *Repository) Handler(w http.ResponseWriter, r *http.Request) int {
+	switch r.Method {
+	case http.MethodGet:
 		return filmRepository.GetMediator(w, r)
-	} else if r.Method == http.MethodPut {
+	case http.MethodPut:
 		return filmRepository.AddNewFilm(w, r)
-	} else if r.Method == http.MethodDelete {
+	case http.MethodDelete:
 		return filmRepository.DeleteFilmByID(w, r)
-	} else if r.Method == http.MethodPost {
+	case http.MethodPost:
 		return filmRepository.ChangeInformationAboutFilm(w, r)
-	} else {
+	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		log.Println("Method not allowed", r.Method)
 		return http.StatusMethodNotAllowed
 	}
 }
 
-func (filmRepository *FilmRepository) GetMediator(w http.ResponseWriter, r *http.Request) int {
+func (filmRepository *Repository) GetMediator(w http.ResponseWriter, r *http.Request) int {
 	queryParams := r.URL.Query()
 	title := queryParams.Get("title")
 	actor := queryParams.Get("actor")
 	if title == "" && actor == "" {
 		return filmRepository.GetAllFilms(w, queryParams)
-
 	}
 
 	if actor == "all" {
@@ -63,7 +64,7 @@ func (filmRepository *FilmRepository) GetMediator(w http.ResponseWriter, r *http
 	return filmRepository.GetFilmByTitleOrActorNameAndSurname(w, title, actor)
 }
 
-func (filmRepository *FilmRepository) GetFilmByTitleOrActorNameAndSurname(w http.ResponseWriter, title, actor string) int {
+func (filmRepository *Repository) GetFilmByTitleOrActorNameAndSurname(w http.ResponseWriter, title, actor string) int {
 	repository := filmRepository.repository
 	log.Println("request: get film by title or actor name and surname")
 	films, err := repository.FindFilmByTitleOrActorName(title, actor)
@@ -89,7 +90,7 @@ func (filmRepository *FilmRepository) GetFilmByTitleOrActorNameAndSurname(w http
 	return http.StatusOK
 }
 
-func (filmRepository *FilmRepository) GetActors(w http.ResponseWriter, title string) int {
+func (filmRepository *Repository) GetActors(w http.ResponseWriter, title string) int {
 	repository := filmRepository.repository
 	log.Println("request: get film's actors")
 	actors, err := repository.FindAllActors(title)
@@ -116,7 +117,7 @@ func (filmRepository *FilmRepository) GetActors(w http.ResponseWriter, title str
 	return http.StatusOK
 }
 
-func (filmRepository *FilmRepository) GetAllFilms(w http.ResponseWriter, queryParams url.Values) int {
+func (filmRepository *Repository) GetAllFilms(w http.ResponseWriter, queryParams url.Values) int {
 	repository := filmRepository.repository
 	log.Println("request: get all films and sort")
 	films, err := repository.GetAllFilms()
@@ -127,6 +128,7 @@ func (filmRepository *FilmRepository) GetAllFilms(w http.ResponseWriter, queryPa
 	}
 	sortField := queryParams.Get("sortField")
 	sortType := queryParams.Get("sortType")
+
 	switch sortField {
 	case "ID":
 		if sortType == "asc" {
@@ -173,7 +175,7 @@ func (filmRepository *FilmRepository) GetAllFilms(w http.ResponseWriter, queryPa
 	return http.StatusOK
 }
 
-func (filmRepository *FilmRepository) AddNewFilm(w http.ResponseWriter, r *http.Request) int {
+func (filmRepository *Repository) AddNewFilm(w http.ResponseWriter, r *http.Request) int {
 	repository := filmRepository.repository
 	log.Println("request: put new film")
 	queryParams := r.URL.Query()
@@ -203,7 +205,7 @@ func (filmRepository *FilmRepository) AddNewFilm(w http.ResponseWriter, r *http.
 	return http.StatusOK
 }
 
-func (filmRepository *FilmRepository) DeleteFilmByID(w http.ResponseWriter, r *http.Request) int {
+func (filmRepository *Repository) DeleteFilmByID(w http.ResponseWriter, r *http.Request) int {
 	repository := filmRepository.repository
 	log.Println("request: delete film by ID")
 	queryParams := r.URL.Query()
@@ -234,7 +236,7 @@ func (filmRepository *FilmRepository) DeleteFilmByID(w http.ResponseWriter, r *h
 	return http.StatusOK
 }
 
-func (filmRepository *FilmRepository) ChangeInformationAboutFilm(w http.ResponseWriter, r *http.Request) int {
+func (filmRepository *Repository) ChangeInformationAboutFilm(w http.ResponseWriter, r *http.Request) int {
 	repository := filmRepository.repository
 	log.Println("request: post information about film")
 	queryParams := r.URL.Query()

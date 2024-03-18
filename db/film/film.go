@@ -2,12 +2,13 @@ package film
 
 import (
 	"database/sql"
-	"github.com/lilpipidron/vk-godeveloper-task/api/types/actor"
-	"github.com/lilpipidron/vk-godeveloper-task/api/types/film"
-	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/lilpipidron/vk-godeveloper-task/api/types/actor"
+	"github.com/lilpipidron/vk-godeveloper-task/api/types/film"
+	"github.com/lilpipidron/vk-godeveloper-task/db/actorFilm"
 )
 
 type FilmRepository interface {
@@ -53,7 +54,9 @@ func (repository *Repository) GetAllFilms() ([]*film.Film, error) {
 			log.Println(err)
 		}
 	}(rows)
+
 	var films []*film.Film
+
 	for rows.Next() {
 		f := &film.Film{}
 		err := rows.Scan(&f.ID, &f.Title, &f.Description, &f.ReleaseDate, &f.Rating)
@@ -64,6 +67,7 @@ func (repository *Repository) GetAllFilms() ([]*film.Film, error) {
 			}
 			return nil, err
 		}
+
 		films = append(films, f)
 	}
 	return films, nil
@@ -277,7 +281,12 @@ func (repository *Repository) FindAllActors(title string) ([]*actor.ActorWithFil
 	if err != nil {
 		return nil, err
 	}
+
 	filmID, err := repository.findFilmIDByTitle(title)
+	if err != nil {
+		return nil, err
+	}
+
 	actorsAndFilm := actorFilm.NewActorFilmRepository(repository.DB)
 	actorsID, err := actorsAndFilm.GetAllActorsID(filmID)
 	if err != nil {
@@ -292,6 +301,7 @@ func (repository *Repository) FindAllActors(title string) ([]*actor.ActorWithFil
 	for i, actorID := range actorsID {
 		query := "SELECT actor_id, actor_name, actor_surname, actor_gender, actor_date_of_birth FROM actor_film_view WHERE actor_id = $1"
 		rows, err := repository.DB.Query(query, actorID)
+
 		for rows.Next() {
 			if err != nil {
 				err := tx.Rollback()
